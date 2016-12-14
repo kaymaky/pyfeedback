@@ -1,0 +1,28 @@
+language: python
+
+env:
+    # the Django version from requirements.txt is used
+  - $DENV=""
+    # the latest Django stable version is used
+  - $DENV="pip install --upgrade Django"
+    # the latest Django development version is used
+  - $DENV="pip install --upgrade --pre Django"
+
+cache: pip
+
+python: 
+  - "2.7"
+
+install:
+  - pip install -r requirements.txt
+  - $DENV
+  - pip install coveralls
+
+script:
+  - python src/manage.py makemigrations
+  - python src/manage.py migrate
+  - python src/manage.py test feedback
+  - coverage run --omit="*/migrations*" --source="." src/manage.py test feedback
+
+after_success:
+  coveralls
